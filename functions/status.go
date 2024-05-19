@@ -32,26 +32,26 @@ func ChangeStatus(s *discordgo.Session) {
 	}
 
 	// intervalas
-	ticker := time.NewTicker(5 * time.Second) // how often should check status
+	ticker := time.NewTicker(40 * time.Second) // how often should check status
 	defer ticker.Stop()
 
 	for range ticker.C {
+		channel, err := s.Channel(channelId)
+
 		go func() {
-			channel, err := s.State.Channel(channelId)
 			if err != nil {
-				fmt.Println("Can't fetch channel")
+				log.Fatalln("Can't fetch channel")
+				return
 			}
 
 			result, err := mcstatus.GetJavaStatus(host, uint16(convertedPort))
 			if err != nil {
 				fmt.Printf("Can't get server status: %v", err)
+				return
 			}
-
-			onlineName := "🟢 Žaidžia: " + fmt.Sprintf("%d/20", result.Players.Online)
 
 			if !result.Online {
 				if channel.Name == offlineName {
-					fmt.Println("ignoruoju1")
 					return
 				}
 
@@ -64,6 +64,8 @@ func ChangeStatus(s *discordgo.Session) {
 					return
 				}
 			} else {
+				onlineName := "🟢 Žaidžia: " + fmt.Sprintf("%d/20", result.Players.Online)
+
 				if channel.Name == onlineName {
 					return
 				}

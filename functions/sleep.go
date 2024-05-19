@@ -27,7 +27,7 @@ func SleepCron(s *discordgo.Session) {
 		fmt.Println("it is time")
 
 		channelId := os.Getenv("CHANNEL_ID")
-		channel, err := s.State.Channel(channelId)
+		channel, err := s.Channel(channelId)
 
 		if err != nil {
 			fmt.Println("Cant grab channel")
